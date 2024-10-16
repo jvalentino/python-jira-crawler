@@ -1,6 +1,7 @@
 # execution_handler.py
 from jira_service import JiraService
 from settings import load_settings_from_yaml
+import os
 
 class ExecutionHandler:
     jira_service = JiraService()
@@ -15,8 +16,11 @@ class ExecutionHandler:
         print(" (1) Loading Settings")
         settings = load_settings_from_yaml('settings.yaml')
         print(f"  {settings}")
+        print("")
         
         print(" (2) Obtain Jira Epics")
+        auth = os.getenv(settings.auth_env_var, '')
+        self.jira_service.validate(settings, auth)
         epics = self.jira_service.pull_epics()
         
         print(" (3) Obtain Jira Stories")

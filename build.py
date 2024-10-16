@@ -24,6 +24,7 @@ def set_properties(project):
     project.depends_on("requests")
     project.depends_on("Pillow")
     project.depends_on("PyYAML")
+    project.depends_on("requests")
     
     # Check for tkinter
     try:
