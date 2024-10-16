@@ -1,3 +1,41 @@
+# Python Jira Magic
+
+
+
+Getting this to work with tk was a pain:
+
+.zshrc
+
+```bash
+export PATH="/opt/homebrew/opt/tcl-tk/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/tcl-tk/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/tcl-tk/include"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/tcl-tk/lib/pkgconfig"
+```
+
+Install it, and reinstall python
+
+```bash
+brew install python-tk
+brew reinstall python@3.11
+brew install ghostscript
+
+python3 -m venv venv --system-site-packages
+source venv/bin/activate
+# shows a little box in a popup
+python3 -m tkinter
+# pip install Pillow
+pyb install_dependencies
+
+python3 src/main/python/turtledemo.py
+```
+
+
+
+
+
+
+
 # Example Python Library (Part 1)
 
 The purpose of this project is to be a basic python library built using PyBuilder.
