@@ -34,6 +34,79 @@ python3 src/main/python/turtledemo.py
 
 
 
+# Querying for epics
+
+GET https://vertexinc.atlassian.net/rest/api/3/search?jql=
+
+..where sql needs to be HTTP escaped as in `project = FOO AND type = Epic AND "epic name" ~ "JOHN" ORDER BY created DESC`
+
+- `Due Date` maps to `issues[].fields.duedate`
+- `Start Date` maps to `issues[].fields.customfield_14222`, indicating this can be different between Jira implementation
+- `Title` is `issues[].fields.summary`
+
+You then have to query for the stories epic-by-epic
+
+The JQL will look like this `"Epic Link" = XXX-106`
+
+- Points is `issues[].fields.customfield_10004`, which means we need a setting for the point field on stories
+- Title `issues[].fields.summary`
+- Status `issues[].fields.status.name`, which means we need to have settings for notating Done, Versus Not Done, Versus In progress
+
+
+
+Consider also that we have an informal grouping of epics, indirectly via "fix versions" and then in their title. Do I require grouping via settings, and try to pull it out of the title. I think that using optional settings is the best idea.
+
+# Underlying Logic
+
+1. We only care about epics with state and end dates
+2. Sort by group (if present) and then sort by epic start date
+
+
+
+Given
+
+- Epic A is 0 - 4
+- Epic B is 2 - 4
+- Epic C is 2 - 4
+- Epic D is 4 - 8
+- Epic E is 4 - 6
+
+When
+
+- The logic is performed
+
+Then
+
+- A is placed at 0,0
+- Since B overlaps the time of A, it is placed on the next row at 1, and the column tied to its date at 2
+- Since C overlaps both A and B, it is placed on the next row of B which is at 2. The column is based on date so 2
+- Since D doesn't overlap anything, it is placed on the first available row, which is 0
+- Since E overlaps D, it goes not he next available row of 1
+
+The end result is
+
+```
+  0 1 2 3 4 5 6 7 8
+0 A A A A D D D D 
+1     B B E E
+2     C C
+```
+
+A more detailed look into placement logic, for each epic
+
+- Start and End column are always fixed, based on date
+- For row
+  - If there is no overlap on this row, place it
+- If the epic could not be placed, put it on a new row
+
+
+
+# Configuration
+
+
+
+
+
 
 
 # Example Python Library (Part 1)
