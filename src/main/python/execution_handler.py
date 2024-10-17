@@ -2,6 +2,7 @@
 from jira_service import JiraService
 from settings import load_settings_from_yaml
 import os
+import requests
 
 class ExecutionHandler:
     jira_service = JiraService()
@@ -20,8 +21,13 @@ class ExecutionHandler:
         
         print(" (2) Obtain Jira Epics")
         auth = os.getenv(settings.auth_env_var, '')
-        self.jira_service.validate(settings, auth)
-        epics = self.jira_service.pull_epics()
+        try:
+            self.jira_service.validate(settings, auth)
+        except requests.exceptions.RequestException as e:
+            raise
+        
+        epics = self.jira_service.pull_epics(settings, auth)
+        print("")
         
         print(" (3) Obtain Jira Stories")
         

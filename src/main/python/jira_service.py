@@ -1,5 +1,6 @@
 from url_util import UrlUtil
 import requests
+from urllib.parse import quote
 
 class JiraService:
     def __init__(self):
@@ -15,12 +16,20 @@ class JiraService:
         
         try:
             response = UrlUtil.http_get(url, auth)
-            print(response)
         except requests.exceptions.RequestException as e:
             print(f"Connection error: {e}")
-            # Handle the exception or re-raise it
             raise
         
 
-    def pull_epics(self):
+    def pull_epics(self, settings, auth):
         print("  jira_service.py: pull_epics()")
+        
+        encoded_jql = quote(settings.epic_jql)
+        url = f"{settings.base_url}/rest/api/3/search?jql={encoded_jql}"
+        
+        epics = UrlUtil.http_get_pagination(url, auth)
+        print(f"   Found {len(epics)} epics")
+        
+        return epics
+        
+        
