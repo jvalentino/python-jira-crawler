@@ -2,6 +2,8 @@ from url_util import UrlUtil
 import requests
 from urllib.parse import quote
 from epic import Epic
+import os
+import json
 
 class JiraService:
     def __init__(self):
@@ -25,6 +27,14 @@ class JiraService:
     def pull_epics(self, settings, auth):
         print("  jira_service.py: pull_epics()")
         
+        # Check if target/epics.json exists
+        file_path = 'target/epics.json'
+        if os.path.exists(file_path):
+            print(f"   Loading epics from {file_path}")
+            with open(file_path, 'r') as file:
+                epics = json.load(file)
+                return [Epic(**epic) for epic in epics]
+        
         encoded_jql = quote(settings.epic_jql)
         url = f"{settings.base_url}/rest/api/3/search?jql={encoded_jql}"
         
@@ -46,6 +56,10 @@ class JiraService:
             print(f"   {epic}")
             epics.append(epic)
         
+        # Write the result to target/epics.json
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, 'w') as file:
+            json.dump([epic.__dict__ for epic in epics], file, indent=4)
         
         return epics
         
