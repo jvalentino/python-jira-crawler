@@ -3,6 +3,7 @@ from jira_service import JiraService
 from settings import load_settings_from_yaml
 import os
 import requests
+from epic import Epic
 
 class ExecutionHandler:
     jira_service = JiraService()
@@ -27,6 +28,7 @@ class ExecutionHandler:
             raise
         
         epics = self.jira_service.pull_epics(settings, auth)
+        print(f"  {len(epics)} epics parsed")
         print("")
         
         print(" (3) Obtain Jira Stories")
