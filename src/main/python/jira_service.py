@@ -167,6 +167,12 @@ class JiraService:
             epic.story_points = epic.story_points_completed + epic.story_points_in_progress + epic.story_points_todo
             epic.story_count = epic.story_count_completed + epic.story_count_in_progress + epic.story_count_todo
         
+        # sort by grouping and then start date
+        for epic in epics:
+            if (epic.grouping == None):
+                epic.grouping = "Other"
+        epics.sort(key=lambda epic: (epic.grouping, epic.start_date))
+        
         # write the result to target/epic_with_stories.json
         file_path = 'target/epics_with_stories_and_stats.json'
         self.write_epics(epics, file_path)
