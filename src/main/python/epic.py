@@ -7,7 +7,7 @@ class Epic:
                  story_points=0.0, story_count=0, story_points_completed=0.0, 
                  story_points_in_progress=0.0, story_points_todo=0.0, 
                  story_count_completed=0, story_count_in_progress=0, 
-                 story_count_todo=0, stories=None):
+                 story_count_todo=0, stories=None, grouping=None):
         self.key = key
         self.due_date = due_date
         self.start_date = start_date
@@ -24,6 +24,7 @@ class Epic:
         self.story_count_in_progress = story_count_in_progress
         self.story_count_todo = story_count_todo
         self.stories = stories if stories is not None else []
+        self.grouping = grouping
         
     def to_dict(self):
         return {
@@ -42,6 +43,7 @@ class Epic:
             'story_count_completed': self.story_count_completed,
             'story_count_in_progress': self.story_count_in_progress,
             'story_count_todo': self.story_count_todo,
+            'grouping': self.grouping,
             'stories': [story.to_dict() for story in self.stories]
         }
 

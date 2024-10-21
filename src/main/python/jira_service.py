@@ -61,6 +61,13 @@ class JiraService:
                 epic.assignee_icon = assignee.get('avatarUrls', {}).get('48x48', '')            
             
             
+            # attempt to look up their groupings from the settings
+            for grouping_name, epic_keys in settings.groupings.items():
+                    if epic.key in epic_keys:
+                        epic.grouping = grouping_name
+                        # print(f"   Found grouping {grouping_name} for epic {epic.key}")
+                        break
+            
             # Only keep epics that have start and end dates
             if (epic.start_date == None or epic.start_date == '') or (epic.due_date == None or epic.due_date == ''):
                 print(f"   X {epic}")
