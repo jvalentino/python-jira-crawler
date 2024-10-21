@@ -52,7 +52,7 @@ class JiraService:
             epic.key = raw_epic.get('key', '')
             epic.start_date = raw_epic.get('fields', {}).get(settings.epic_start_date_field, '')
             
-             # Safely get the assignee's display name
+            # Safely get the assignee's display name
             assignee = raw_epic.get('fields', {}).get('assignee')
             if assignee:
                 epic.assignee_name = assignee.get('displayName', '')
