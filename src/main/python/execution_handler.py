@@ -4,9 +4,11 @@ from settings import load_settings_from_yaml
 import os
 import requests
 from epic import Epic
+from charting_service import ChartingService
 
 class ExecutionHandler:
     jira_service = JiraService()
+    charting_service = ChartingService()
     
     def __init__(self):
         # Initialize any necessary variables or state here
@@ -41,6 +43,8 @@ class ExecutionHandler:
         print("")
         
         print(" (5) Figure out how to organize in a Gantt")
+        groupings = self.charting_service.generate_groupings(updated_epics)
+        print("")
         
         print(" (6) Generate Gantt")
         
