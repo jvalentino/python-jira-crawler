@@ -32,6 +32,7 @@ class ExecutionHandler:
         print("")
         
         print(" (3) Obtain Jira Stories")
+        # self.jira_service.pull_stories(settings, auth, epics)
         
         print(" (4) Figure out how to organize in a Gantt")
         
