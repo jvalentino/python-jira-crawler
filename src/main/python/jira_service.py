@@ -12,6 +12,26 @@ class JiraService:
         # Initialize any necessary variables or state here
         pass
     
+    def read_epics(self, file_path):
+        if os.path.exists(file_path):
+            print(f"   Loading epics from {file_path}")
+            with open(file_path, 'r') as file:
+                epics_data = json.load(file)
+                epics = []
+                for epic_data in epics_data:
+                    stories = [Story(**story_data) for story_data in epic_data.pop('stories', [])]
+                    epic = Epic(**epic_data)
+                    epic.stories = stories
+                    epics.append(epic)
+                return epics
+        else:
+            return None
+        
+    def write_epics(self, epics, file_path):
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, 'w') as file:
+            json.dump([epic.to_dict() for epic in epics], file, indent=4)
+    
     def validate(self, settings, auth):
         print("  jira_service.py: validate()")
         
@@ -31,11 +51,10 @@ class JiraService:
         
         # Check if target/epics.json exists
         file_path = 'target/epics.json'
-        if os.path.exists(file_path):
-            print(f"   Loading epics from {file_path}")
-            with open(file_path, 'r') as file:
-                epics = json.load(file)
-                return [Epic(**epic) for epic in epics]
+        epics = self.read_epics(file_path)
+        
+        if (epics != None):
+            return epics
         
         encoded_jql = quote(settings.epic_jql)
         url = f"{settings.base_url}/rest/api/3/search?jql={encoded_jql}"
@@ -77,22 +96,18 @@ class JiraService:
             epics.append(epic)
         
         # Write the result to target/epics.json
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        with open(file_path, 'w') as file:
-            json.dump([epic.to_dict() for epic in epics], file, indent=4)
+        self.write_epics(epics, file_path)
         
         return epics
         
-    def pull_stories(self, settings, auth, epics):
+    def pull_stories(self, settings, auth, epics_with_no_stories):
         print(f"  jira_service.py: pull_stories()")
         
         # Check if target/epics.json exists
         file_path = 'target/epic_with_stories.json'
-        if os.path.exists(file_path):
-            print(f"   Loading epics from {file_path}")
-            with open(file_path, 'r') as file:
-                epics = json.load(file)
-                return [Epic(**epic) for epic in epics]
+        epics = self.read_epics(file_path);
+        if (epics != None):
+            return epics
 
         def fetch_stories_for_epic(epic):
             jql = f'"Epic Link" = {epic.key}'
@@ -103,7 +118,7 @@ class JiraService:
 
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            future_to_epic = {executor.submit(fetch_stories_for_epic, epic): epic for epic in epics}
+            future_to_epic = {executor.submit(fetch_stories_for_epic, epic): epic for epic in epics_with_no_stories}
             for future in concurrent.futures.as_completed(future_to_epic):
                 epic = future_to_epic[future]
                 try:
@@ -116,9 +131,9 @@ class JiraService:
                     print(f"   Epic {epic.key} generated an exception: {exc}")
                     
         # write the result to target/epic_with_stories.json
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        with open(file_path, 'w') as file:
-            json.dump([epic.to_dict() for epic in epics], file, indent=4)
+        self.write_epics(epics_with_no_stories, file_path)
+            
+        return epics_with_no_stories
 
 
     def parse_story(self, settings, raw_story):
@@ -128,4 +143,30 @@ class JiraService:
         story.status = raw_story.get('fields', {}).get('status', {}).get('name', '')
         story.points = raw_story.get('fields', {}).get(settings.story_point_field, 0.0)
         return story
+    
+    def update_with_stats(self, settings, epics):
+        print("  jira_service.py: update_with_stats()")
         
+        for epic in epics:
+            for story in epic.stories:
+                points = story.points or 0  # Handle None as zero
+                if story.status == settings.story_done_status:
+                    epic.story_points_completed += points
+                    epic.story_count_completed += 1
+                elif story.status == settings.story_in_progress_status:
+                    epic.story_points_in_progress += points
+                    epic.story_count_in_progress += 1
+                else:
+                    epic.story_points_todo += points
+                    epic.story_count_todo += 1
+            
+            epic.story_points = epic.story_points_completed + epic.story_points_in_progress + epic.story_points_todo
+            epic.story_count = epic.story_count_completed + epic.story_count_in_progress + epic.story_count_todo
+
+                    
+            epic.story_points = epic.story_points_completed + epic.story_points_in_progress + epic.story_points_todo
+            epic.story_count = epic.story_count_completed + epic.story_count_in_progress + epic.story_count_todo
+        
+        # write the result to target/epic_with_stories.json
+        file_path = 'target/epics_with_stories_and_stats.json'
+        self.write_epics(epics, file_path)

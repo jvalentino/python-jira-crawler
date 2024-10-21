@@ -32,11 +32,17 @@ class ExecutionHandler:
         print("")
         
         print(" (3) Obtain Jira Stories")
-        self.jira_service.pull_stories(settings, auth, epics)
+        updated_epics = self.jira_service.pull_stories(settings, auth, epics)
+        print(f"  {len(updated_epics)} epics")
+        print("")
         
-        print(" (4) Figure out how to organize in a Gantt")
+        print(" (4) Generating Epic Stats")
+        self.jira_service.update_with_stats(settings, updated_epics)
+        print("")
         
-        print(" (5) Generate Gantt")
+        print(" (5) Figure out how to organize in a Gantt")
+        
+        print(" (6) Generate Gantt")
         
         
 
