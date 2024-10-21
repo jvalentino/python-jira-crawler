@@ -25,6 +25,25 @@ class Epic:
         self.story_count_todo = story_count_todo
         self.stories = stories if stories is not None else []
         
+    def to_dict(self):
+        return {
+            'key': self.key,
+            'due_date': self.due_date,
+            'start_date': self.start_date,
+            'title': self.title,
+            'assignee_name': self.assignee_name,
+            'assignee_email': self.assignee_email,
+            'assignee_icon': self.assignee_icon,
+            'story_points': self.story_points,
+            'story_count': self.story_count,
+            'story_points_completed': self.story_points_completed,
+            'story_points_in_progress': self.story_points_in_progress,
+            'story_points_todo': self.story_points_todo,
+            'story_count_completed': self.story_count_completed,
+            'story_count_in_progress': self.story_count_in_progress,
+            'story_count_todo': self.story_count_todo,
+            'stories': [story.to_dict() for story in self.stories]
+        }
 
     def __repr__(self):
         return (f"Epic(key={self.key}, due_date={self.due_date}, "

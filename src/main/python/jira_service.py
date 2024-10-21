@@ -5,6 +5,7 @@ from epic import Epic
 import os
 import json
 import concurrent.futures
+from story import Story
 
 class JiraService:
     def __init__(self):
@@ -71,12 +72,20 @@ class JiraService:
         # Write the result to target/epics.json
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, 'w') as file:
-            json.dump([epic.__dict__ for epic in epics], file, indent=4)
+            json.dump([epic.to_dict() for epic in epics], file, indent=4)
         
         return epics
         
     def pull_stories(self, settings, auth, epics):
         print(f"  jira_service.py: pull_stories()")
+        
+        # Check if target/epics.json exists
+        file_path = 'target/epic_with_stories.json'
+        if os.path.exists(file_path):
+            print(f"   Loading epics from {file_path}")
+            with open(file_path, 'r') as file:
+                epics = json.load(file)
+                return [Epic(**epic) for epic in epics]
 
         def fetch_stories_for_epic(epic):
             jql = f'"Epic Link" = {epic.key}'
@@ -85,7 +94,6 @@ class JiraService:
             stories = UrlUtil.http_get_pagination(url, auth)
             return stories
 
-        all_stories = []
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             future_to_epic = {executor.submit(fetch_stories_for_epic, epic): epic for epic in epics}
@@ -93,11 +101,24 @@ class JiraService:
                 epic = future_to_epic[future]
                 try:
                     stories = future.result()
-                    all_stories.extend(stories)
+                    # pase the stories and add them to the epic
+                    parsed_stories = [self.parse_story(settings, raw_story) for raw_story in stories]
                     print(f"   Fetched {len(stories)} stories for epic {epic.key}")
+                    epic.stories = parsed_stories
                 except Exception as exc:
                     print(f"   Epic {epic.key} generated an exception: {exc}")
+                    
+        # write the result to target/epic_with_stories.json
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, 'w') as file:
+            json.dump([epic.to_dict() for epic in epics], file, indent=4)
 
-        return all_stories
-        
+
+    def parse_story(self, settings, raw_story):
+        story = Story()
+        story.title = raw_story.get('fields', {}).get('summary', '')
+        story.key = raw_story.get('key', '')
+        story.status = raw_story.get('fields', {}).get('status', {}).get('name', '')
+        story.points = raw_story.get('fields', {}).get(settings.story_point_field, 0.0)
+        return story
         
