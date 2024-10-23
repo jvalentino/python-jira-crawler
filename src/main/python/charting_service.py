@@ -1,9 +1,15 @@
 from epic_grouping import EpicGrouping
 from epic_setting import EpicSetting
+from chart_settings import ChartSettings
+import json
 
 class ChartingService:
     def __init__(self):
         pass
+    
+    def chart_settings_to_json(self, file_path, chart_settings):
+        with open(file_path, 'w') as file:
+            json.dump(chart_settings, file, indent=4, default=lambda o: o.__dict__)
 
     def generate_groupings(self, epics):
         print("  charting_service.py: generate_groupings()")
@@ -31,5 +37,8 @@ class ChartingService:
         # for each grouping
         for grouping in groupings:
             print(f"   {grouping.grouping} has {len(grouping.epic_settings)} epics")
-            
-        return groupings
+        
+        chart_settings = ChartSettings(epic_groupings=groupings)
+        
+        self.chart_settings_to_json('target/chart_settings_initial.json', chart_settings)
+        return chart_settings

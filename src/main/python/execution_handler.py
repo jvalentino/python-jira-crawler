@@ -43,7 +43,7 @@ class ExecutionHandler:
         print("")
         
         print(" (5) Figure out how to organize in a Gantt")
-        groupings = self.charting_service.generate_groupings(updated_epics)
+        chart_settings = self.charting_service.generate_groupings(updated_epics)
         print("")
         
         print(" (6) Generate Gantt")
