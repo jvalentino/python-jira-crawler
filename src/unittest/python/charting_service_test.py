@@ -40,3 +40,14 @@ class ChartingServiceTest(unittest.TestCase):
         self.assertEqual(11, mapping['2024-12-23'])
         self.assertEqual(12, mapping['2024-12-30'])
         
+    def test_process_grouping(self):
+        print("test_process_grouping")
+        chart_settings = ChartSettings()
+        chart_settings.date_min = '2024-10-07'
+        chart_settings.weeks = 12
+        chart_settings.row_min = 0
+        chart_settings.column_min = 0
+        chart_settings.column_max = 11
+        
+        
+        

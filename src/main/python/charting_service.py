@@ -65,8 +65,8 @@ class ChartingService:
         chart_settings.column_min = 0
         print(f"   column min: {chart_settings.column_min}")
         
-        # the max column is always going to be the number of weeks - 1
-        chart_settings.column_max = chart_settings.weeks - 1
+        # the max column is always going to be the number of weeks
+        chart_settings.column_max = chart_settings.weeks 
         print(f"   column max: {chart_settings.column_max}")
         
         # now the hard part, which is figuring out the row and column group by group
@@ -101,7 +101,7 @@ class ChartingService:
         delta = date2 - date1
         
         # Convert the difference into weeks
-        weeks = delta.days / 7
+        weeks = delta.days // 7
         return weeks
     
     def get_mapping_of_date_to_column(self, chart_settings):
@@ -117,9 +117,15 @@ class ChartingService:
     
     def process_grouping(self, chart_settings, grouping):
         # create a mapping of date to column
-        date_to_column = {}
+        date_to_column = self.get_mapping_of_date_to_column(chart_settings)
+        
+        # FiXME: Need to check first and see if start and end dates are in the mapping
         
         # for each epic in this grouping
         for epic_setting in grouping.epic_settings:
             # the start end end column are always fixed, and based on start and due date
-            pass
+            epic_setting.column_start = date_to_column[epic_setting.epic.start_date]
+            epic_setting.column_end = date_to_column[epic_setting.epic.due_date]
+            
+        # for each epic grouping, need to figure out the row
+        
