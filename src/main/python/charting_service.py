@@ -175,6 +175,11 @@ class ChartingService:
     def print_grouping(self, chart_settings, grouping):
         print("")
         print(f"{grouping.grouping}")
+        # show the codes for each epic
+        for epic_setting in grouping.epic_settings:
+            print(f"- {epic_setting.alpha_key}{epic_setting.alpha_key}: [{epic_setting.epic.key}] {epic_setting.epic.title}")
+        
+        print("")
         
         # draw the columns
         print("   ", end="")
