@@ -127,5 +127,34 @@ class ChartingService:
             epic_setting.column_start = date_to_column[epic_setting.epic.start_date]
             epic_setting.column_end = date_to_column[epic_setting.epic.due_date]
             
-        # for each epic grouping, need to figure out the row
-        
+        # for each epic, need to figure out the row
+        for epic_setting in grouping.epic_settings:
+            # determine the first row where nothing overlaps
+            current_row = 0
+            while (True):
+                # if the current row is not already taken
+                if not self.does_epic_overlap(current_row, epic_setting, grouping.epic_settings):
+                    epic_setting.row = current_row
+                    break
+                
+                current_row += 1
+            
+                
+    def does_epic_overlap(self, current_row, given_epic_setting, epic_settings):
+        # for each epic in the grouping
+        for current_epic_setting in epic_settings:
+            # if the current epic is the same as the given epic, skip
+            if current_epic_setting.epic.key == given_epic_setting.epic.key:
+                continue
+            
+            # if the current epic is not on the same row we are checking, skip it
+            if current_epic_setting.row != current_row:
+                continue
+            
+            # if there is any overlap between start and end columns
+            if (current_epic_setting.column_start < given_epic_setting.column_end and
+                current_epic_setting.column_end > given_epic_setting.column_start):
+                return True
+            
+        # there is no overlap   
+        return False
