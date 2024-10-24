@@ -121,11 +121,18 @@ class ChartingService:
         
         # FiXME: Need to check first and see if start and end dates are in the mapping
         
+        alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        
         # for each epic in this grouping
+        alphabet_index = 0
         for epic_setting in grouping.epic_settings:
             # the start end end column are always fixed, and based on start and due date
             epic_setting.column_start = date_to_column[epic_setting.epic.start_date]
-            epic_setting.column_end = date_to_column[epic_setting.epic.due_date]
+            epic_setting.column_end = date_to_column[epic_setting.epic.due_date] -1
+            
+            # assign a single letter to represent this epic in this group
+            epic_setting.alpha_key = alphabet[alphabet_index]
+            alphabet_index += 1
             
         # for each epic, need to figure out the row
         for epic_setting in grouping.epic_settings:
@@ -138,6 +145,12 @@ class ChartingService:
                     break
                 
                 current_row += 1
+        
+        # determine the row_max in this grouping
+        grouping.row_max = max([epic_setting.row for epic_setting in grouping.epic_settings])
+        
+        # now print the grouping in ASCII style format
+        self.print_grouping(chart_settings, grouping)
             
                 
     def does_epic_overlap(self, current_row, given_epic_setting, epic_settings):
@@ -158,3 +171,39 @@ class ChartingService:
             
         # there is no overlap   
         return False
+    
+    def print_grouping(self, chart_settings, grouping):
+        print("")
+        print(f"{grouping.grouping}")
+        
+        # draw the columns
+        print("   ", end="")
+        for i in range(chart_settings.column_max + 1):
+            print(f"{str(i).zfill(2)} ", end="")
+        print("")
+        
+        # for each row...
+        for i in range(grouping.row_max + 1):
+            # print the row number
+            print(f"{str(i).zfill(2)} ", end="")
+            
+            # print all epics on this row
+            self.print_epics_on_row(i, chart_settings.column_max, grouping.epic_settings)
+            
+        
+        print("")
+        
+    def print_epics_on_row(self, row, column_max, epic_settings):
+        # Create a list to store the output for the row
+        row_output = ["   "] * (column_max + 1)
+        
+        # for each epic in the grouping
+        for epic_setting in epic_settings:
+            # if the epic is on this row
+            if epic_setting.row == row:
+                # for each column in the epic's range
+                for i in range(epic_setting.column_start, epic_setting.column_end + 1):
+                    row_output[i] = f"{epic_setting.alpha_key}{epic_setting.alpha_key} "
+        
+        # Print the row output
+        print("".join(row_output))

@@ -115,28 +115,36 @@ class ChartingServiceTest(unittest.TestCase):
         
         # THEN verify the position of the first epic (EPIC-131)
         self.assertEqual(0, epic_setting_1.column_start)
-        self.assertEqual(4, epic_setting_1.column_end)
+        self.assertEqual(3, epic_setting_1.column_end)
         self.assertEqual(0, epic_setting_1.row)
+        self.assertEqual('A', epic_setting_1.alpha_key)
         
         # AND verify the position of the second epic (EPIC-76)
         self.assertEqual(2, epic_setting_2.column_start)
-        self.assertEqual(4, epic_setting_2.column_end)
+        self.assertEqual(3, epic_setting_2.column_end)
         self.assertEqual(1, epic_setting_2.row)
+        self.assertEqual('B', epic_setting_2.alpha_key)
         
         # AND verify the position of the third epic (EPIC-72)
         self.assertEqual(2, epic_setting_3.column_start)
-        self.assertEqual(4, epic_setting_3.column_end)
+        self.assertEqual(3, epic_setting_3.column_end)
         self.assertEqual(2, epic_setting_3.row)
+        self.assertEqual('C', epic_setting_3.alpha_key)
         
         # AND verify the position of the fourth epic (EPIC-74)
         self.assertEqual(4, epic_setting_4.column_start)
-        self.assertEqual(8, epic_setting_4.column_end)
+        self.assertEqual(7, epic_setting_4.column_end)
         self.assertEqual(0, epic_setting_4.row)
+        self.assertEqual('D', epic_setting_4.alpha_key)
         
         # AND verify the position of the firth epic (EPIC-77)
         self.assertEqual(4, epic_setting_5.column_start)
-        self.assertEqual(6, epic_setting_5.column_end)
+        self.assertEqual(5, epic_setting_5.column_end)
         self.assertEqual(1, epic_setting_5.row)
+        self.assertEqual('E', epic_setting_5.alpha_key)
+        
+        # and verify the max row for the grouping
+        self.assertEqual(2, epic_grouping.row_max)
         
 
         
