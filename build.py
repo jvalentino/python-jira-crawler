@@ -1,6 +1,7 @@
 #   -*- coding: utf-8 -*-
-from pybuilder.core import use_plugin, init, Author
+from pybuilder.core import use_plugin, init, Author, task, after
 import sys
+import os
 
 use_plugin("python.core")
 use_plugin("python.unittest")
@@ -34,3 +35,15 @@ def set_properties(project):
     
     # Declare the main script
     project.set_property('distutils_console_scripts', ['python-jira-crawler=main:main'])
+    
+    
+    # Set unittest properties
+    project.set_property('unittest_module_glob', '*_test')
+    project.set_property('unittest_verbosity', 2)  # Increase verbosity to show test names
+    project.set_property('unittest_break_at_fail', True)  # Stop at first failure
+
+@after('run_unit_tests')
+#@finalizer
+def unit_test(project, logger):
+    with open('target/reports/unittest', 'r') as file:
+        print(file.read())

@@ -46,7 +46,11 @@ class ExecutionHandler:
         chart_settings = self.charting_service.generate_groupings(updated_epics)
         print("")
         
-        print(" (6) Generate Gantt")
+        print(" (6) Generate row and column positions")
+        self.charting_service.update_with_positions(chart_settings)
+        print("")
+        
+        print(" (7) Generate Gantt")
         
         
 
