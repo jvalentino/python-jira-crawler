@@ -9,20 +9,14 @@ class DrawingService:
 
     def draw(self, chart_settings):
         # FIXME: need to generate the height and width
-        width = 1500
-        height = 1000
+        constants = ChartConstants(1500, 1000)
         
         # Set up the turtle screen
         screen = turtle.Screen()
-        screen.setup(width=width, height=height)
+        screen.setup(width=constants.width, height=constants.height)
         screen.bgcolor("white")
-        
-        # Starting position
-        margin_x = (width // 10)
-        start_x = -width // 2 + margin_x
-        start_y = height // 2 - 50
 
-        self.draw_background(chart_settings, width, height, start_x, start_y)
+        self.draw_background(chart_settings, constants)
 
         # Save the drawing to a PNG file
         canvas = screen.getcanvas()
@@ -35,30 +29,35 @@ class DrawingService:
         # Clean up
         turtle.bye()
         
-    def draw_background(self, chart_settings, width, height, start_x, start_y):
+    def draw_background(self, chart_settings, constants):
         pen = turtle.Turtle()
         pen.speed(0)
-    
+        
+        date_list = list(chart_settings.date_to_column.keys())
+        
         for i in range(chart_settings.column_max + 1):
             # Move to the starting position of the line
             pen.penup()
-            pen.goto(start_x + i * 100, start_y)
+            pen.goto(constants.start_x + i * constants.WEEK_WIDTH_PX, constants.start_y)
             
             # Write the index
             pen.write(str(i), align="center", font=("Arial", 12, "normal"))
-            print(f"Drawing line {i} at {start_x + i * 100}, {start_y}")
+            
+            # Move down to write Date
+            pen.right(90)
+            pen.forward(20)
+            pen.write(date_list[i], align="center", font=("Arial", 12, "bold"))
             
             # Move down to start drawing the line
-            pen.right(90)
             pen.forward(20)
             pen.pendown()
             
             # Draw the line
-            pen.forward(height - 100)
+            pen.forward(constants.height - constants.margin_y)
             
             # Reset the pen position and orientation
             pen.penup()
-            pen.goto(start_x + i * 100, start_y)
+            pen.goto(constants.start_x + i * constants.WEEK_WIDTH_PX, constants.start_y)
             pen.left(90)
         
         # Hide the turtle and display the window

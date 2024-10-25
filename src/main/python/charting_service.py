@@ -42,6 +42,7 @@ class ChartingService:
         
         chart_settings = ChartSettings(epic_groupings=groupings)
         
+        
         self.chart_settings_to_json('target/chart_settings_initial.json', chart_settings)
         print("   Initial settings written to target/chart_settings_initial.json")
         return chart_settings
@@ -68,6 +69,9 @@ class ChartingService:
         # the max column is always going to be the number of weeks
         chart_settings.column_max = chart_settings.weeks 
         print(f"   column max: {chart_settings.column_max}")
+        
+        # create a mapping of date to column
+        chart_settings.date_to_column = self.get_mapping_of_date_to_column(chart_settings)
         
         # now the hard part, which is figuring out the row and column group by group
         for grouping in chart_settings.epic_groupings:
@@ -116,8 +120,6 @@ class ChartingService:
         return date_to_column
     
     def process_grouping(self, chart_settings, grouping):
-        # create a mapping of date to column
-        date_to_column = self.get_mapping_of_date_to_column(chart_settings)
         
         # FiXME: Need to check first and see if start and end dates are in the mapping
         
@@ -127,8 +129,8 @@ class ChartingService:
         alphabet_index = 0
         for epic_setting in grouping.epic_settings:
             # the start end end column are always fixed, and based on start and due date
-            epic_setting.column_start = date_to_column[epic_setting.epic.start_date]
-            epic_setting.column_end = date_to_column[epic_setting.epic.due_date] -1
+            epic_setting.column_start = chart_settings.date_to_column[epic_setting.epic.start_date]
+            epic_setting.column_end = chart_settings.date_to_column[epic_setting.epic.due_date] -1
             
             # assign a single letter to represent this epic in this group
             epic_setting.alpha_key = alphabet[alphabet_index]

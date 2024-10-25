@@ -8,5 +8,6 @@ class ChartSettings:
        self.column_min = -1
        self.column_max = -1
        self.weeks = -1
+       self.date_to_column = {}
        self.epic_groupings = epic_groupings
        
