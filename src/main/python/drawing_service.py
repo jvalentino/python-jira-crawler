@@ -175,14 +175,15 @@ class DrawingService:
             # End filling the rectangle
             pen.end_fill()
             
-            # Write the epic code
+            # Title
             pen.penup()
             pen.goto(constants.start_x + epic_setting.column_start * constants.WEEK_WIDTH_PX + 5, vertical_position - 15)
-            pen.write(f'{epic_setting.epic.key} {epic_setting.friendly_assigned}', align="left", font=("Arial", 10, "normal"))
-            
-            # Write the epic title under the key
-            pen.goto(constants.start_x + epic_setting.column_start * constants.WEEK_WIDTH_PX + 5, vertical_position - 30)
             pen.write(f'{epic_setting.friendly_name}', align="left", font=("Arial", 10, "bold"))
+
+            # Key and assigned
+            pen.goto(constants.start_x + epic_setting.column_start * constants.WEEK_WIDTH_PX + 5, vertical_position - 30)
+            pen.write(f'{epic_setting.epic.key} {epic_setting.friendly_assigned}', align="left", font=("Arial", 10, "normal"))
+
         
         # Write the epic grouping text at the bottom of the blue box
         pen.penup()
