@@ -33,6 +33,10 @@ class ChartingService:
             current_grouping.epic_settings.append(epic_setting)
             #print(f"    {epic.grouping} adding {epic.title}")
             
+            # format the epic name
+            epic_setting.friendly_name = self.extract_text_after_last_bracket(epic.title)
+            epic_setting.friendly_assigned = self.abbreviate_name(epic.assignee_name)
+            
             previous_grouping_name = epic.grouping
             
         
@@ -42,10 +46,47 @@ class ChartingService:
         
         chart_settings = ChartSettings(epic_groupings=groupings)
         
-        
         self.chart_settings_to_json('target/chart_settings_initial.json', chart_settings)
         print("   Initial settings written to target/chart_settings_initial.json")
         return chart_settings
+    
+    def abbreviate_name(self, name):
+        # Check if the input is None or empty
+        if not name:
+            return ""
+        
+        # Split the name into parts based on space or dot
+        if '.' in name:
+            parts = name.split('.')
+        else:
+            parts = name.split()
+        
+        # Capitalize the first letter of each part
+        parts = [part.capitalize() for part in parts]
+        
+        # If there's only one part, return it as is
+        if len(parts) == 1:
+            return parts[0]
+        
+        # Get the first name and the initial of the last name
+        first_name = parts[0]
+        last_initial = parts[1][0] if len(parts) > 1 else ""
+        
+        # Return the formatted name
+        return f"{first_name} {last_initial}"
+    
+    def extract_text_after_last_bracket(self, input_string):
+        # Find the last occurrence of '[' or ']'
+        last_bracket_index = max(input_string.rfind('['), input_string.rfind(']'))
+        
+        # If no bracket is found, return an empty string
+        if last_bracket_index == -1:
+            return ""
+        
+        # Extract the content after the last bracket and trim whitespace
+        result = input_string[last_bracket_index + 1:].strip()
+        
+        return result
     
     def update_with_positions(self, chart_settings):
         print("  charting_service.py: determine_row_and_column()")
