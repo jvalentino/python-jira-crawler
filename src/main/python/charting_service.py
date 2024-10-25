@@ -169,8 +169,8 @@ class ChartingService:
                 continue
             
             # if there is any overlap between start and end columns
-            if (current_epic_setting.column_start < given_epic_setting.column_end and
-                current_epic_setting.column_end > given_epic_setting.column_start):
+            if (current_epic_setting.column_start <= given_epic_setting.column_end and
+                current_epic_setting.column_end >= given_epic_setting.column_start):
                 return True
             
         # there is no overlap   

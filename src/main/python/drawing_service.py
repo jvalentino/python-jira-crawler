@@ -12,10 +12,11 @@ class DrawingService:
 
     def draw(self, chart_settings):
         # FIXME: need to generate the height and width
-        constants = ChartConstants(1500, 1000)
+        constants = ChartConstants(1500, self.calculate_canvas_height(chart_settings.epic_groupings))
         
         # Set up the turtle screen
         screen = turtle.Screen()
+        screen.tracer(0, 0)
         screen.setup(width=constants.width, height=constants.height)
         screen.bgcolor("white")
 
@@ -37,6 +38,22 @@ class DrawingService:
         # Clean up
         turtle.bye()
         
+    def calculate_canvas_height(self, epic_groupings, row_height=40, top_padding=10, bottom_padding=20, margin_y=10, additional_spacing=30):
+        total_height = 0
+        
+        for epic_grouping in epic_groupings:
+            # Calculate the height of the current grouping
+            grouping_height = (epic_grouping.row_max + 1) * row_height + top_padding + bottom_padding
+            total_height += grouping_height + additional_spacing  # Add additional spacing after each grouping
+        
+        # Remove the last additional_spacing as it's not needed after the last grouping
+        total_height -= additional_spacing
+        
+        # Add the initial top margin and final bottom margin
+        total_height += top_padding + bottom_padding
+        
+        return total_height
+
     def save_as_png(self, canvas):
         # Adjust font size in the SVG
         for item in canvas.find_all():
