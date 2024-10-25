@@ -2,6 +2,9 @@ from chart_constants import ChartConstants
 
 import turtle
 from PIL import Image
+import canvasvg
+import cairosvg
+
 
 class DrawingService:
     def __init__(self):
@@ -22,14 +25,39 @@ class DrawingService:
 
         # Save the drawing to a PNG file
         canvas = screen.getcanvas()
-        canvas.postscript(file="target/chart.eps")
+        #canvas.postscript(file="target/chart.eps")
 
         # Convert EPS to PNG using Pillow
-        img = Image.open("target/chart.eps")
-        img.save("target/chart.png")
+        #img = Image.open("target/chart.eps")
+        #img.save("target/chart.png")
+        self.save_as_png(canvas)
 
         # Clean up
         turtle.bye()
+        
+    def save_as_png(self, canvas):
+        # Adjust font size in the SVG
+        for item in canvas.find_all():
+            if canvas.type(item) == 'text':
+                font = canvas.itemcget(item, 'font')
+                # Extract the font size from the font string
+                font_parts = font.split()
+                if len(font_parts) > 1:
+                    try:
+                        font_size = int(font_parts[1])
+                        # Reduce the font size by a small factor (e.g., 0.9)
+                        new_font_size = int(font_size * 0.9)
+                        # Reconstruct the font string with the new font size
+                        new_font = f"{font_parts[0]} {new_font_size} {' '.join(font_parts[2:])}"
+                        canvas.itemconfig(item, font=new_font)
+                    except ValueError:
+                        # If font size extraction fails, skip this item
+                        continue
+        # Save the canvas as an SVG file
+        canvasvg.saveall("target/chart.svg", canvas)
+        
+        # Convert the SVG to a high-resolution PNG using cairosvg
+        cairosvg.svg2png(url="target/chart.svg", write_to="target/chart.png")
         
     def draw_background(self, chart_settings, constants):
         pen = turtle.Turtle()
