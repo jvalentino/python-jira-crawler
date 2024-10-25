@@ -21,10 +21,13 @@ class DrawingService:
 
         self.draw_background(chart_settings, constants)
         
-        y_offset = 0
-        y_offset = self.draw_grouping(chart_settings, constants, chart_settings.epic_groupings[2], y_offset)
-        y_offset = self.draw_grouping(chart_settings, constants, chart_settings.epic_groupings[0], y_offset)
-        y_offset = self.draw_grouping(chart_settings, constants, chart_settings.epic_groupings[1], y_offset)
+        y_offset = 5
+        for epic_grouping in chart_settings.epic_groupings:
+            y_offset = self.draw_grouping(chart_settings, constants, epic_grouping, y_offset)
+        
+        #y_offset = self.draw_grouping(chart_settings, constants, chart_settings.epic_groupings[2], y_offset)
+        #y_offset = self.draw_grouping(chart_settings, constants, chart_settings.epic_groupings[0], y_offset)
+        #y_offset = self.draw_grouping(chart_settings, constants, chart_settings.epic_groupings[1], y_offset)
 
 
         # Save the drawing to a PNG file
