@@ -150,6 +150,8 @@ class ChartingService:
         
         # determine the row_max in this grouping
         grouping.row_max = max([epic_setting.row for epic_setting in grouping.epic_settings])
+        grouping.column_max = max([epic_setting.column_end for epic_setting in grouping.epic_settings])
+        grouping.column_min = min([epic_setting.column_start for epic_setting in grouping.epic_settings])
         
         # now print the grouping in ASCII style format
         self.print_grouping(chart_settings, grouping)

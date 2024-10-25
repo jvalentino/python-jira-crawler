@@ -52,6 +52,8 @@ class ChartingServiceTest(unittest.TestCase):
         chart_settings.column_min = 0
         chart_settings.column_max = 12
         
+        chart_settings.date_to_column = self.charting_service.get_mapping_of_date_to_column(chart_settings)
+        
         # AND There is only one grouping, that contains several epics
         epic_grouping = EpicGrouping(grouping='Group 1')
         
@@ -145,6 +147,8 @@ class ChartingServiceTest(unittest.TestCase):
         
         # and verify the max row for the grouping
         self.assertEqual(2, epic_grouping.row_max)
+        self.assertEqual(7, epic_grouping.column_max)
+        self.assertEqual(0, epic_grouping.column_min)
         
 
         

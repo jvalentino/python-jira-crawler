@@ -17,6 +17,8 @@ class DrawingService:
         screen.bgcolor("white")
 
         self.draw_background(chart_settings, constants)
+        
+        self.draw_grouping(chart_settings, constants, chart_settings.epic_groupings[2])
 
         # Save the drawing to a PNG file
         canvas = screen.getcanvas()
@@ -63,6 +65,50 @@ class DrawingService:
         # Hide the turtle and display the window
         pen.hideturtle()
 
+    def draw_grouping(self, chart_settings, constants, epic_grouping):
+        pen = turtle.Turtle()
+        pen.speed(0)
+        pen.color("black", "#CCCCCC")  # Set the outline color to black and fill color to #CCCCCC
+        
+        for epic_setting in epic_grouping.epic_settings:
+            # Calculate the vertical position with additional 10px space between rectangles
+            vertical_position = constants.start_y - (epic_setting.row * 40) - constants.margin_y
+            
+            # Move to the starting position of the rectangle
+            pen.penup()
+            pen.goto(
+                constants.start_x + epic_setting.column_start * constants.WEEK_WIDTH_PX, 
+                vertical_position)
+            
+            # Start filling the rectangle
+            pen.begin_fill()
+            
+            # Draw the rectangle
+            pen.pendown()
+            pen.forward((epic_setting.column_end - epic_setting.column_start + 1) * constants.WEEK_WIDTH_PX)  # Top side
+            pen.right(90)
+            pen.forward(30)  # Right side
+            pen.right(90)
+            pen.forward((epic_setting.column_end - epic_setting.column_start + 1) * constants.WEEK_WIDTH_PX)  # Bottom side
+            pen.right(90)
+            pen.forward(30)  # Left side
+            pen.right(90)
+            
+            # End filling the rectangle
+            pen.end_fill()
+            
+            # Write the epic code
+            pen.penup()
+            pen.goto(constants.start_x + epic_setting.column_start * constants.WEEK_WIDTH_PX + 5, vertical_position - 15)
+            pen.write(epic_setting.epic.key, align="left", font=("Arial", 12, "normal"))
+            
+            # Write the epic title under the key
+            pen.goto(constants.start_x + epic_setting.column_start * constants.WEEK_WIDTH_PX + 5, vertical_position - 30)
+            pen.write(epic_setting.epic.title, align="left", font=("Arial", 10, "normal"))
+    
+        
+        # Hide the turtle and display the window
+        pen.hideturtle()
 
 
 
