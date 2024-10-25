@@ -68,6 +68,34 @@ class DrawingService:
     def draw_grouping(self, chart_settings, constants, epic_grouping):
         pen = turtle.Turtle()
         pen.speed(0)
+        
+        # Define padding
+        top_padding = 10
+        bottom_padding = 20  # Increased bottom padding
+        
+        # Draw the light blue box around the entire area
+        pen.color("black", "lightblue")  # Set the outline color to black and fill color to light blue
+        pen.penup()
+        pen.goto(
+            constants.start_x + epic_grouping.column_min * constants.WEEK_WIDTH_PX, 
+            constants.start_y - constants.margin_y + top_padding)
+        
+        pen.begin_fill()
+        
+        # Draw the light blue rectangle
+        pen.pendown()
+        pen.forward((epic_grouping.column_max - epic_grouping.column_min + 1) * constants.WEEK_WIDTH_PX)  # Top side
+        pen.right(90)
+        pen.forward((epic_grouping.row_max + 1) * 40 + top_padding + bottom_padding)  # Right side
+        pen.right(90)
+        pen.forward((epic_grouping.column_max - epic_grouping.column_min + 1) * constants.WEEK_WIDTH_PX)  # Bottom side
+        pen.right(90)
+        pen.forward((epic_grouping.row_max + 1) * 40 + top_padding + bottom_padding)  # Left side
+        pen.right(90)
+        
+        pen.end_fill()
+        
+        # Draw each epic setting rectangle
         pen.color("black", "#CCCCCC")  # Set the outline color to black and fill color to #CCCCCC
         
         for epic_setting in epic_grouping.epic_settings:
@@ -105,7 +133,12 @@ class DrawingService:
             # Write the epic title under the key
             pen.goto(constants.start_x + epic_setting.column_start * constants.WEEK_WIDTH_PX + 5, vertical_position - 30)
             pen.write(epic_setting.epic.title, align="left", font=("Arial", 10, "normal"))
-    
+        
+        # Write the epic grouping text at the bottom of the blue box
+        pen.penup()
+        pen.goto(constants.start_x + epic_grouping.column_min * constants.WEEK_WIDTH_PX + 5, 
+                constants.start_y - (epic_grouping.row_max + 1) * 40 - constants.margin_y - bottom_padding)
+        pen.write(epic_grouping.grouping, align="left", font=("Arial", 14, "bold"))
         
         # Hide the turtle and display the window
         pen.hideturtle()
