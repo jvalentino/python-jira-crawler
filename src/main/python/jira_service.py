@@ -162,7 +162,6 @@ class JiraService:
             
             epic.story_points = epic.story_points_completed + epic.story_points_in_progress + epic.story_points_todo
             epic.story_count = epic.story_count_completed + epic.story_count_in_progress + epic.story_count_todo
-
                     
             epic.story_points = epic.story_points_completed + epic.story_points_in_progress + epic.story_points_todo
             epic.story_count = epic.story_count_completed + epic.story_count_in_progress + epic.story_count_todo

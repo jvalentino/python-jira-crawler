@@ -37,6 +37,16 @@ class ChartingService:
             epic_setting.friendly_name = self.extract_text_after_last_bracket(epic.title)
             epic_setting.friendly_assigned = self.abbreviate_name(epic.assignee_name)
             
+            # figure out the % complete
+            if (epic.story_points == 0):
+                epic_setting.percent_complete = 0
+                epic_setting.percent_in_progress = 0
+                epic_setting.percent_not_started = 0
+            else:
+                epic_setting.percent_complete = epic.story_points_completed / epic.story_points
+                epic_setting.percent_in_progress = epic.story_points_in_progress / epic.story_points
+                epic_setting.percent_not_started = 1 - epic_setting.percent_complete - epic_setting.percent_in_progress
+            
             previous_grouping_name = epic.grouping
             
         

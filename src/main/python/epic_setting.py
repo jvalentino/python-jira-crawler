@@ -6,5 +6,8 @@ class EpicSetting:
         self.alpha_key = None
         self.friendly_name = None
         self.friendly_assigned = None
+        self.percent_complete = None
+        self.percent_in_progress = None
+        self.percent_not_started = None
         self.epic = epic
     
