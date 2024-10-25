@@ -21,15 +21,14 @@ class DrawingService:
 
         self.draw_background(chart_settings, constants)
         
-        self.draw_grouping(chart_settings, constants, chart_settings.epic_groupings[2])
+        y_offset = 0
+        y_offset = self.draw_grouping(chart_settings, constants, chart_settings.epic_groupings[2], y_offset)
+        y_offset = self.draw_grouping(chart_settings, constants, chart_settings.epic_groupings[0], y_offset)
+        y_offset = self.draw_grouping(chart_settings, constants, chart_settings.epic_groupings[1], y_offset)
+
 
         # Save the drawing to a PNG file
         canvas = screen.getcanvas()
-        #canvas.postscript(file="target/chart.eps")
-
-        # Convert EPS to PNG using Pillow
-        #img = Image.open("target/chart.eps")
-        #img.save("target/chart.png")
         self.save_as_png(canvas)
 
         # Clean up
@@ -93,7 +92,7 @@ class DrawingService:
         # Hide the turtle and display the window
         pen.hideturtle()
 
-    def draw_grouping(self, chart_settings, constants, epic_grouping):
+    def draw_grouping(self, chart_settings, constants, epic_grouping, y_offset=0):
         pen = turtle.Turtle()
         pen.speed(0)
         
@@ -101,12 +100,15 @@ class DrawingService:
         top_padding = 10
         bottom_padding = 20  # Increased bottom padding
         
+        # Calculate the starting y position with the y_offset
+        start_y = constants.start_y - y_offset
+        
         # Draw the light blue box around the entire area
         pen.color("black", "lightblue")  # Set the outline color to black and fill color to light blue
         pen.penup()
         pen.goto(
             constants.start_x + epic_grouping.column_min * constants.WEEK_WIDTH_PX, 
-            constants.start_y - constants.margin_y + top_padding)
+            start_y - constants.margin_y + top_padding)
         
         pen.begin_fill()
         
@@ -128,7 +130,7 @@ class DrawingService:
         
         for epic_setting in epic_grouping.epic_settings:
             # Calculate the vertical position with additional 10px space between rectangles
-            vertical_position = constants.start_y - (epic_setting.row * 40) - constants.margin_y
+            vertical_position = start_y - (epic_setting.row * 40) - constants.margin_y
             
             # Move to the starting position of the rectangle
             pen.penup()
@@ -165,15 +167,17 @@ class DrawingService:
         # Write the epic grouping text at the bottom of the blue box
         pen.penup()
         pen.goto(constants.start_x + epic_grouping.column_min * constants.WEEK_WIDTH_PX + 5, 
-                constants.start_y - (epic_grouping.row_max + 1) * 40 - constants.margin_y - bottom_padding)
+                start_y - (epic_grouping.row_max + 1) * 40 - constants.margin_y - bottom_padding)
         pen.write(epic_grouping.grouping, align="left", font=("Arial", 14, "bold"))
         
         # Hide the turtle and display the window
         pen.hideturtle()
-
-
-
-
+        
+        # Calculate the height of the blue box
+        blue_box_height = (epic_grouping.row_max + 1) * 40 + top_padding + bottom_padding
+        
+        # Return the new y_offset
+        return y_offset + blue_box_height + 20
 
 
 
