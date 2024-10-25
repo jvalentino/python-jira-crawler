@@ -5,10 +5,12 @@ import os
 import requests
 from epic import Epic
 from charting_service import ChartingService
+from drawing_service import DrawingService
 
 class ExecutionHandler:
     jira_service = JiraService()
     charting_service = ChartingService()
+    drawing_service = DrawingService()
     
     def __init__(self):
         # Initialize any necessary variables or state here
@@ -51,6 +53,7 @@ class ExecutionHandler:
         print("")
         
         print(" (7) Generate Gantt")
+        self.drawing_service.draw(chart_settings)
         
         
 
