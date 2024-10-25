@@ -146,7 +146,7 @@ class DrawingService:
         pen.end_fill()
         
         # Draw each epic setting rectangle
-        pen.color("black", "#CCCCCC")  # Set the outline color to black and fill color to #CCCCCC
+        pen.color("black", "#CCCCCC")  # Set the outline color to black and fill color to gray
         
         for epic_setting in epic_grouping.epic_settings:
             # Calculate the vertical position with additional 10px space between rectangles
@@ -175,6 +175,57 @@ class DrawingService:
             # End filling the rectangle
             pen.end_fill()
             
+            # Draw the progress bars on top of the gray box
+            total_length = (epic_setting.column_end - epic_setting.column_start + 1) * constants.WEEK_WIDTH_PX
+            
+            # Draw the green box for percent_complete
+            pen.fillcolor("green")  # Green color
+            pen.penup()
+            pen.goto(constants.start_x + epic_setting.column_start * constants.WEEK_WIDTH_PX, vertical_position)
+            pen.pendown()
+            pen.begin_fill()
+            pen.forward(total_length * epic_setting.percent_complete)
+            pen.right(90)
+            pen.forward(30)
+            pen.right(90)
+            pen.forward(total_length * epic_setting.percent_complete)
+            pen.right(90)
+            pen.forward(30)
+            pen.right(90)
+            pen.end_fill()
+            
+            # Draw the yellow box for percent_in_progress
+            pen.fillcolor("yellow")  # Yellow color
+            pen.penup()
+            pen.goto(constants.start_x + epic_setting.column_start * constants.WEEK_WIDTH_PX + total_length * epic_setting.percent_complete, vertical_position)
+            pen.pendown()
+            pen.begin_fill()
+            pen.forward(total_length * epic_setting.percent_in_progress)
+            pen.right(90)
+            pen.forward(30)
+            pen.right(90)
+            pen.forward(total_length * epic_setting.percent_in_progress)
+            pen.right(90)
+            pen.forward(30)
+            pen.right(90)
+            pen.end_fill()
+            
+            # Draw the dark gray box for percent_not_started
+            pen.fillcolor("#A9A9A9")  # Dark gray color
+            pen.penup()
+            pen.goto(constants.start_x + epic_setting.column_start * constants.WEEK_WIDTH_PX + total_length * (epic_setting.percent_complete + epic_setting.percent_in_progress), vertical_position)
+            pen.pendown()
+            pen.begin_fill()
+            pen.forward(total_length * epic_setting.percent_not_started)
+            pen.right(90)
+            pen.forward(30)
+            pen.right(90)
+            pen.forward(total_length * epic_setting.percent_not_started)
+            pen.right(90)
+            pen.forward(30)
+            pen.right(90)
+            pen.end_fill()
+            
             # Title
             pen.penup()
             pen.goto(constants.start_x + epic_setting.column_start * constants.WEEK_WIDTH_PX + 5, vertical_position - 15)
@@ -199,7 +250,3 @@ class DrawingService:
         
         # Return the new y_offset
         return y_offset + blue_box_height + 20
-
-
-
-        
