@@ -4,6 +4,8 @@ import turtle
 from PIL import Image
 import canvasvg
 import cairosvg
+from date_util import find_first_index_after_date
+from date_util import current_yyyy_mm_dd_as_string
 
 
 class DrawingService:
@@ -87,8 +89,16 @@ class DrawingService:
         pen.pensize(2)
         
         date_list = list(chart_settings.date_to_column.keys())
+        current_date = current_yyyy_mm_dd_as_string()
+        current_index = find_first_index_after_date(date_list, current_date)
         
         for i in range(chart_settings.column_max + 1):
+            
+            if (i == current_index or i + 1 == current_index):
+                pen.color("red")
+            else:
+                pen.color("black")
+            
             # Move to the starting position of the line
             pen.penup()
             pen.goto(constants.start_x + i * constants.WEEK_WIDTH_PX, constants.start_y)
