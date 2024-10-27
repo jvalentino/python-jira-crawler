@@ -23,8 +23,11 @@ class DrawingService:
         self.draw_background(chart_settings, constants)
         
         y_offset = 5
+        i = 0
         for epic_grouping in chart_settings.epic_groupings:
-            y_offset = self.draw_grouping(chart_settings, constants, epic_grouping, y_offset)
+            color = ChartConstants.get_color(i)
+            y_offset = self.draw_grouping(chart_settings, constants, epic_grouping, y_offset, color)
+            i += 1
         
         #y_offset = self.draw_grouping(chart_settings, constants, chart_settings.epic_groupings[2], y_offset)
         #y_offset = self.draw_grouping(chart_settings, constants, chart_settings.epic_groupings[0], y_offset)
@@ -81,6 +84,7 @@ class DrawingService:
     def draw_background(self, chart_settings, constants):
         pen = turtle.Turtle()
         pen.speed(0)
+        pen.pensize(2)
         
         date_list = list(chart_settings.date_to_column.keys())
         
@@ -112,9 +116,10 @@ class DrawingService:
         # Hide the turtle and display the window
         pen.hideturtle()
 
-    def draw_grouping(self, chart_settings, constants, epic_grouping, y_offset=0):
+    def draw_grouping(self, chart_settings, constants, epic_grouping, y_offset=0, color='lightblue'):
         pen = turtle.Turtle()
         pen.speed(0)
+        pen.pensize(2)
         
         # Define padding
         top_padding = 10
@@ -124,7 +129,7 @@ class DrawingService:
         start_y = constants.start_y - y_offset
         
         # Draw the light blue box around the entire area
-        pen.color("black", "lightblue")  # Set the outline color to black and fill color to light blue
+        pen.color("black", color)  # Set the outline color to black and fill color to light blue
         pen.penup()
         pen.goto(
             constants.start_x + epic_grouping.column_min * constants.WEEK_WIDTH_PX, 
@@ -178,6 +183,8 @@ class DrawingService:
             # Draw the progress bars on top of the gray box
             total_length = (epic_setting.column_end - epic_setting.column_start + 1) * constants.WEEK_WIDTH_PX
             
+            pen.pensize(0)
+            
             # Draw the green box for percent_complete
             pen.fillcolor("green")  # Green color
             pen.penup()
@@ -225,6 +232,8 @@ class DrawingService:
             pen.forward(30)
             pen.right(90)
             pen.end_fill()
+            
+            pen.pensize(2)
             
             # Title
             pen.penup()
