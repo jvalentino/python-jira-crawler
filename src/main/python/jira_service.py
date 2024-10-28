@@ -171,7 +171,7 @@ class JiraService:
             if (epic.grouping == None):
                 epic.grouping = "Other"
         # epics.sort(key=lambda epic: (epic.grouping, epic.start_date))
-        epics.sort(key=lambda epic: (epic.grouping, epic.start_date, epic.assignee_name))
+        epics.sort(key=lambda epic: (epic.grouping, epic.start_date, epic.assignee_name if epic.assignee_name is not None else ""))
         
         # write the result to target/epic_with_stories.json
         file_path = 'target/epics_with_stories_and_stats.json'
