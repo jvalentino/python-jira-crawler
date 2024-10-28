@@ -1,4 +1,12 @@
-# Python Jira Magic
+# Jira Magical Tooling (Python Edition)
+
+When dealing with anything related to Agile or Project Management, I inevitably find myself resorting to have to code my own tools and reports. 
+
+BUT WHY?!
+
+
+
+## Setup
 
 
 
@@ -36,7 +44,7 @@ python3 src/main/python/turtledemo.py
 
 # Querying for epics
 
-GET https://vertexinc.atlassian.net/rest/api/3/search?jql=
+GET https://XXX.atlassian.net/rest/api/3/search?jql=
 
 ..where sql needs to be HTTP escaped as in `project = FOO AND type = Epic AND "epic name" ~ "JOHN" ORDER BY created DESC`
 

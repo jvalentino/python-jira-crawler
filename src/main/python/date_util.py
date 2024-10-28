@@ -19,7 +19,7 @@ def find_first_index_after_date(date_list, current_date_str):
         date = datetime.strptime(date_str, "%Y-%m-%d")
         
         # Check if the date is equal to or after the current date
-        if date >= current_date:
+        if date > current_date:
             return index
     
     # If no date is found, return -1
