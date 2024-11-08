@@ -150,7 +150,7 @@ class JiraService:
         for epic in epics:
             for story in epic.stories:
                 points = story.points or 0  # Handle None as zero
-                if story.status == settings.story_done_status:
+                if story.status == settings.story_done_status or story.status == 'Cancelled':
                     epic.story_points_completed += points
                     epic.story_count_completed += 1
                 elif story.status == settings.story_in_progress_status:
