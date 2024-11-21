@@ -113,7 +113,9 @@ class JiraService:
             jql = f'"Epic Link" = {epic.key}'
             encoded_jql = quote(jql)
             url = f"{settings.base_url}/rest/api/3/search?jql={encoded_jql}"
+            print(f"     {epic.key}: {url}")
             stories = UrlUtil.http_get_pagination(url, auth)
+            print(f"     {epic.key}: {len(stories)} stories found")
             return stories
 
 
